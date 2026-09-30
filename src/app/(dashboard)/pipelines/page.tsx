@@ -321,20 +321,20 @@ export default function PipelinesPage() {
           {/* Pipeline selector dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors data-[popup-open]:bg-muted"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#0c0915]/80 backdrop-blur-xl px-3.5 py-2 text-sm text-white hover:bg-white/[0.06] transition-colors data-[popup-open]:bg-white/[0.08]"
             >
-              <GitBranch className="h-4 w-4 text-primary" />
-              <span className="font-semibold">
+              <GitBranch className="h-4 w-4 text-[#d4a017]" />
+              <span className="font-semibold font-rajdhani uppercase tracking-wider text-base">
                 {selectedPipeline?.name ?? t("selectPipeline")}
               </span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4 text-white/50" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="w-64 border-border bg-popover text-popover-foreground"
+              className="w-64 border-white/10 bg-[#0c0915] text-white"
             >
               {pipelines.length === 0 && (
-                <DropdownMenuItem disabled className="text-muted-foreground">
+                <DropdownMenuItem disabled className="text-white/40">
                   {t("noPipelinesYet")}
                 </DropdownMenuItem>
               )}
@@ -344,21 +344,21 @@ export default function PipelinesPage() {
                   onClick={() => setSelectedPipelineId(p.id)}
                   className={
                     p.id === selectedPipelineId
-                      ? "text-primary"
-                      : "text-popover-foreground"
+                      ? "text-[#d4a017] font-semibold"
+                      : "text-white hover:bg-white/10"
                   }
                 >
                   <GitBranch className="mr-2 h-3.5 w-3.5" />
                   {p.name}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator className="bg-border" />
+              <DropdownMenuSeparator className="bg-white/10" />
               {selectedPipeline && (
                 <DropdownMenuItem
                   onClick={() => setSettingsOpen(true)}
-                  className="text-popover-foreground"
+                  className="text-white hover:bg-white/10"
                 >
-                  <Settings className="mr-2 h-3.5 w-3.5" />
+                  <Settings className="mr-2 h-3.5 w-3.5 text-[#00f0ff]" />
                   {t("managePipelines")}
                 </DropdownMenuItem>
               )}
@@ -372,7 +372,7 @@ export default function PipelinesPage() {
             canAct={canEditSettings}
             gateReason="create pipelines"
             onClick={() => setNewPipelineOpen(true)}
-            className="border-border bg-card text-foreground hover:bg-muted"
+            className="border-white/10 bg-white/[0.03] text-white/80 hover:bg-white/[0.08] hover:text-white transition-colors"
           >
             <Plus className="mr-1 h-4 w-4" />
             {t("addPipeline")}
@@ -382,7 +382,7 @@ export default function PipelinesPage() {
             gateReason="create deals"
             disabled={!selectedPipelineId || stages.length === 0}
             onClick={() => handleAddDeal()}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            className="bg-gradient-to-r from-[#d4a017] to-[#f5d061] text-black font-semibold shadow-[0_0_20px_rgba(212,160,23,0.35)] hover:shadow-[0_0_25px_rgba(212,160,23,0.55)] transition-all duration-300"
           >
             <Plus className="mr-1 h-4 w-4" />
             {t("addDeal")}

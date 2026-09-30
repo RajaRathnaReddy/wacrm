@@ -44,10 +44,10 @@ function RateCell({
   const pct = percent(value, total);
   return (
     <div className="flex items-center gap-2">
-      <span className="w-10 text-right text-xs tabular-nums text-muted-foreground">
+      <span className="w-10 text-right text-xs tabular-nums text-white/50 font-mono">
         {pct}%
       </span>
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/[0.08]">
         <div
           className={`h-1.5 rounded-full ${color}`}
           style={{ width: `${pct}%` }}
@@ -180,10 +180,17 @@ export default function BroadcastsPage() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <h1 className="font-rajdhani text-3xl font-bold uppercase tracking-wider text-white">
+              {t('title')}
+            </h1>
+            <span className="rounded-full border border-[#00f0ff]/30 bg-[#00f0ff]/10 px-2.5 py-0.5 text-xs font-semibold text-[#00f0ff]">
+              {broadcasts.length} Campaigns
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-white/50">
             {t('subtitle')}
           </p>
         </div>
@@ -191,7 +198,7 @@ export default function BroadcastsPage() {
           canAct={canCreate}
           gateReason="create broadcasts"
           onClick={() => router.push('/broadcasts/new')}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="bg-gradient-to-r from-[#d4a017] to-[#f5d061] text-black font-semibold shadow-[0_0_20px_rgba(212,160,23,0.35)] hover:shadow-[0_0_25px_rgba(212,160,23,0.55)] transition-all duration-300"
         >
           <Plus className="h-4 w-4" />
           {t('newBroadcast')}
@@ -199,36 +206,36 @@ export default function BroadcastsPage() {
       </div>
 
       {broadcasts.length === 0 ? (
-        <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-border bg-card">
-          <Radio className="mb-3 h-10 w-10 text-muted-foreground" />
-          <p className="text-sm font-medium text-foreground">{t('noBroadcastsYet')}</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+        <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+          <Radio className="mb-3 h-10 w-10 text-white/30" />
+          <p className="text-sm font-medium text-white">{t('noBroadcastsYet')}</p>
+          <p className="mt-1 text-xs text-white/50">
             {t('createFirst')}
           </p>
           <GatedButton
             canAct={canCreate}
             gateReason="create broadcasts"
             onClick={() => router.push('/broadcasts/new')}
-            className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
+            className="mt-4 bg-gradient-to-r from-[#d4a017] to-[#f5d061] text-black font-semibold shadow-[0_0_20px_rgba(212,160,23,0.35)] hover:shadow-[0_0_25px_rgba(212,160,23,0.55)] transition-all duration-300"
           >
             <Plus className="h-4 w-4" />
             {t('newBroadcast')}
           </GatedButton>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-card">
+        <div className="overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
           <Table>
             <TableHeader>
-              <TableRow className="border-border hover:bg-transparent">
-                <TableHead className="text-muted-foreground">{t('table.name')}</TableHead>
-                <TableHead className="hidden text-muted-foreground md:table-cell">{t('table.template')}</TableHead>
-                <TableHead className="hidden text-right text-muted-foreground sm:table-cell">
+              <TableRow className="border-white/[0.08] bg-white/[0.02] hover:bg-transparent">
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50">{t('table.name')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden md:table-cell">{t('table.template')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden text-right sm:table-cell">
                   {t('table.recipients')}
                 </TableHead>
-                <TableHead className="hidden text-muted-foreground lg:table-cell">{t('table.delivery')}</TableHead>
-                <TableHead className="hidden text-muted-foreground lg:table-cell">{t('table.read')}</TableHead>
-                <TableHead className="text-muted-foreground">{t('table.status')}</TableHead>
-                <TableHead className="hidden text-muted-foreground sm:table-cell">{t('table.date')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden lg:table-cell">{t('table.delivery')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden lg:table-cell">{t('table.read')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50">{t('table.status')}</TableHead>
+                <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden sm:table-cell">{t('table.date')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -237,35 +244,35 @@ export default function BroadcastsPage() {
                 return (
                   <TableRow
                     key={broadcast.id}
-                    className="cursor-pointer border-border hover:bg-muted/50"
+                    className="cursor-pointer border-white/[0.06] hover:bg-white/[0.03] transition-colors"
                     onClick={() => router.push(`/broadcasts/${broadcast.id}`)}
                   >
-                    <TableCell className="font-medium text-foreground">
+                    <TableCell className="font-medium text-white">
                       {broadcast.name}
                     </TableCell>
-                    <TableCell className="hidden text-muted-foreground md:table-cell">
+                    <TableCell className="hidden text-white/60 md:table-cell font-mono text-xs">
                       {broadcast.template_name}
                     </TableCell>
-                    <TableCell className="hidden text-right text-muted-foreground tabular-nums sm:table-cell">
+                    <TableCell className="hidden text-right text-white/80 tabular-nums font-mono sm:table-cell">
                       {broadcast.total_recipients}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <RateCell
                         value={broadcast.delivered_count}
                         total={broadcast.total_recipients}
-                        color="bg-primary"
+                        color="bg-[#00f0ff]"
                       />
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <RateCell
                         value={broadcast.read_count}
                         total={broadcast.total_recipients}
-                        color="bg-blue-500"
+                        color="bg-[#ff2a85]"
                       />
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${status.classes}`}
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${status.classes}`}
                       >
                         {status.pulse && (
                           <span className="relative flex h-1.5 w-1.5">
@@ -276,7 +283,7 @@ export default function BroadcastsPage() {
                         {tStatus(status.label)}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden text-muted-foreground sm:table-cell">
+                    <TableCell className="hidden text-white/40 font-mono text-xs sm:table-cell">
                       {new Date(broadcast.created_at).toLocaleDateString()}
                     </TableCell>
                   </TableRow>

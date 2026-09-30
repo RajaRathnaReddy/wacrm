@@ -160,10 +160,17 @@ export default function AutomationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <h1 className="font-rajdhani text-3xl font-bold uppercase tracking-wider text-white">
+              {t("title")}
+            </h1>
+            <span className="rounded-full border border-[#00f0ff]/30 bg-[#00f0ff]/10 px-2.5 py-0.5 text-xs font-semibold text-[#00f0ff]">
+              Active Bots & Triggers
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-white/50">
             {t("subtitle")}
           </p>
         </div>
@@ -171,7 +178,7 @@ export default function AutomationsPage() {
           canAct={canCreate}
           gateReason="create automations"
           onClick={() => router.push("/automations/new")}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="bg-gradient-to-r from-[#d4a017] to-[#f5d061] text-black font-semibold shadow-[0_0_20px_rgba(212,160,23,0.35)] hover:shadow-[0_0_25px_rgba(212,160,23,0.55)] transition-all duration-300"
         >
           <Plus className="h-4 w-4" />
           {t("create")}
@@ -180,22 +187,22 @@ export default function AutomationsPage() {
 
       {showTemplates && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{t("templatesTitle")}</h2>
+          <h2 className="mb-3 font-rajdhani text-sm font-semibold uppercase tracking-wider text-white/50">{t("templatesTitle")}</h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {TEMPLATE_ORDER.map((slug) => {
-              const t = AUTOMATION_TEMPLATES[slug]
+              const tpl = AUTOMATION_TEMPLATES[slug]
               const Icon = TEMPLATE_ICON[slug]
               return (
                 <button
                   key={slug}
                   onClick={() => startFromTemplate(slug)}
-                  className="group flex flex-col items-start rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-card/80"
+                  className="group flex flex-col items-start rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl p-4 text-left transition-all hover:border-[#d4a017]/40 hover:bg-white/[0.04]"
                 >
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary/15">
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#d4a017]/10 text-[#d4a017] group-hover:bg-[#d4a017]/20 transition-colors shadow-[0_0_12px_rgba(212,160,23,0.15)]">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="text-sm font-semibold text-foreground">{t.name}</div>
-                  <p className="mt-1 text-xs text-muted-foreground">{t.description}</p>
+                  <div className="text-sm font-semibold text-white font-rajdhani uppercase tracking-wide">{tpl.name}</div>
+                  <p className="mt-1 text-xs text-white/50">{tpl.description}</p>
                 </button>
               )
             })}
@@ -285,13 +292,13 @@ function AutomationCard({
     ? tTriggers(`${automation.trigger_type}.label`)
     : automation.trigger_type
   return (
-    <li className="rounded-xl border border-border bg-card transition-colors hover:border-border">
+    <li className="rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all hover:border-[#00f0ff]/30">
       <div className="flex items-center gap-4 p-4">
         <div
-          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10"
+          className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#00f0ff]/10 text-[#00f0ff] shadow-[0_0_12px_rgba(0,240,255,0.2)]"
           aria-hidden
         >
-          <Zap className="h-5 w-5 text-primary" />
+          <Zap className="h-5 w-5" />
         </div>
 
         <button
@@ -300,20 +307,20 @@ function AutomationCard({
           className="min-w-0 flex-1 text-left"
         >
           <div className="flex items-center gap-2">
-            <span className="truncate text-sm font-semibold text-foreground">
+            <span className="truncate font-rajdhani text-base font-bold uppercase tracking-wide text-white">
               {automation.name}
             </span>
             {automation.is_active && (
               <span className="relative flex h-2 w-2" aria-label={t("activeIndicator")}>
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
             )}
           </div>
           {automation.description && (
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">{automation.description}</p>
+            <p className="mt-0.5 truncate text-xs text-white/50">{automation.description}</p>
           )}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/40">
             <span
               className={cn(
                 "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",

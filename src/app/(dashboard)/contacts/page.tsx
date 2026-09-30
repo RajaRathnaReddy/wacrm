@@ -49,6 +49,8 @@ import {
   SlidersHorizontal,
   Filter,
   X,
+  Phone,
+  MessageSquare,
 } from 'lucide-react';
 import { ContactForm } from '@/components/contacts/contact-form';
 import { ContactDetailView } from '@/components/contacts/contact-detail-view';
@@ -344,8 +346,15 @@ export default function ContactsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <div className="flex items-center gap-3">
+            <h1 className="font-rajdhani text-3xl font-bold uppercase tracking-wider text-white">
+              {t('title')}
+            </h1>
+            <span className="rounded-full border border-[#d4a017]/30 bg-[#d4a017]/10 px-2.5 py-0.5 text-xs font-semibold text-[#d4a017]">
+              {totalCount} Total
+            </span>
+          </div>
+          <p className="text-sm text-white/50 mt-1">
             {totalCount > 0 ? t('subtitle', { count: totalCount }) : t('subtitleZero')}
           </p>
         </div>
@@ -354,7 +363,7 @@ export default function ContactsPage() {
             <Button
               variant="outline"
               onClick={() => setCustomFieldsOpen(true)}
-              className="border-border text-muted-foreground hover:bg-muted"
+              className="border-white/10 bg-white/[0.03] text-white/70 hover:bg-white/[0.08] hover:text-white transition-colors"
             >
               <SlidersHorizontal className="size-4" />
               {t('customFieldsBtn')}
@@ -365,7 +374,7 @@ export default function ContactsPage() {
             canAct={canEdit}
             gateReason="add or import contacts"
             onClick={() => setImportOpen(true)}
-            className="border-border text-muted-foreground hover:bg-muted"
+            className="border-white/10 bg-white/[0.03] text-white/70 hover:bg-white/[0.08] hover:text-white transition-colors"
           >
             <Upload className="size-4" />
             {t('importBtn')}
@@ -374,7 +383,7 @@ export default function ContactsPage() {
             canAct={canEdit}
             gateReason="add or import contacts"
             onClick={openAddForm}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-gradient-to-r from-[#d4a017] to-[#f5d061] text-black font-semibold shadow-[0_0_20px_rgba(212,160,23,0.35)] hover:shadow-[0_0_25px_rgba(212,160,23,0.55)] transition-all duration-300"
           >
             <Plus className="size-4" />
             {t('addContactBtn')}
@@ -528,10 +537,10 @@ export default function ContactsPage() {
       )}
 
       {/* Table */}
-      <div className="rounded-lg border border-border overflow-hidden">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
+            <TableRow className="border-white/[0.08] bg-white/[0.02] hover:bg-transparent">
               <TableHead className="w-10">
                 <Checkbox
                   checked={allOnPageSelected}
@@ -541,31 +550,31 @@ export default function ContactsPage() {
                   aria-label={t('selectAllOnPage')}
                 />
               </TableHead>
-              <TableHead className="text-muted-foreground">{t('tableColumns.name')}</TableHead>
-              <TableHead className="text-muted-foreground">{t('tableColumns.phone')}</TableHead>
-              <TableHead className="text-muted-foreground hidden md:table-cell">{t('tableColumns.email')}</TableHead>
-              <TableHead className="text-muted-foreground hidden lg:table-cell">{t('tableColumns.company')}</TableHead>
-              <TableHead className="text-muted-foreground hidden md:table-cell">{t('tableColumns.tags')}</TableHead>
-              <TableHead className="text-muted-foreground hidden lg:table-cell">{t('tableColumns.createdAt')}</TableHead>
-              <TableHead className="text-muted-foreground w-12" />
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50">{t('tableColumns.name')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50">{t('tableColumns.phone')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden md:table-cell">{t('tableColumns.email')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden lg:table-cell">{t('tableColumns.company')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden md:table-cell">{t('tableColumns.tags')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 hidden lg:table-cell">{t('tableColumns.createdAt')}</TableHead>
+              <TableHead className="font-rajdhani uppercase tracking-wider text-xs font-semibold text-white/50 w-28 text-right pr-4">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow className="border-border">
+              <TableRow className="border-white/[0.06]">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="size-6 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">{t('loading')}</p>
+                    <Loader2 className="size-6 animate-spin text-[#d4a017]" />
+                    <p className="text-sm text-white/40">{t('loading')}</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : contacts.length === 0 ? (
-              <TableRow className="border-border">
+              <TableRow className="border-white/[0.06]">
                 <TableCell colSpan={8} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
-                    <Users className="size-8 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
+                    <Users className="size-8 text-white/20" />
+                    <p className="text-sm text-white/50">
                       {hasActiveFilters
                         ? t('noContactsMatch')
                         : t('noContactsYet')}
@@ -577,7 +586,7 @@ export default function ContactsPage() {
                         variant="outline"
                         size="sm"
                         onClick={openAddForm}
-                        className="mt-2 border-border text-muted-foreground hover:bg-muted"
+                        className="mt-2 border-white/10 bg-white/[0.04] text-white/80 hover:bg-white/[0.08] hover:text-white"
                       >
                         <Plus className="size-3.5" />
                         {t('addFirstContact')}
@@ -590,7 +599,7 @@ export default function ContactsPage() {
               contacts.map((contact) => (
                 <TableRow
                   key={contact.id}
-                  className="border-border hover:bg-muted/50 cursor-pointer"
+                  className="border-white/[0.06] hover:bg-white/[0.03] transition-colors cursor-pointer group"
                   onClick={() => openDetail(contact.id)}
                 >
                   <TableCell onClick={(e) => e.stopPropagation()}>
@@ -600,17 +609,17 @@ export default function ContactsPage() {
                       aria-label={`Select ${contact.name || contact.phone}`}
                     />
                   </TableCell>
-                  <TableCell className="text-foreground font-medium">
-                    {contact.name || <span className="text-muted-foreground italic">{t('unnamed')}</span>}
+                  <TableCell className="text-white font-medium">
+                    {contact.name || <span className="text-white/40 italic">{t('unnamed')}</span>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground font-mono text-xs">
+                  <TableCell className="text-white/60 font-mono text-xs">
                     {contact.phone}
                   </TableCell>
-                  <TableCell className="text-muted-foreground hidden md:table-cell text-sm">
-                    {contact.email || <span className="text-muted-foreground">-</span>}
+                  <TableCell className="text-white/60 hidden md:table-cell text-sm">
+                    {contact.email || <span className="text-white/25">-</span>}
                   </TableCell>
-                  <TableCell className="text-muted-foreground hidden lg:table-cell text-sm">
-                    {contact.company || <span className="text-muted-foreground">-</span>}
+                  <TableCell className="text-white/60 hidden lg:table-cell text-sm">
+                    {contact.company || <span className="text-white/25">-</span>}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
@@ -618,9 +627,10 @@ export default function ContactsPage() {
                         contact.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag.id}
-                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
+                            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border"
                             style={{
-                              backgroundColor: tag.color + '20',
+                              backgroundColor: tag.color + '15',
+                              borderColor: tag.color + '40',
                               color: tag.color,
                             }}
                           >
@@ -628,50 +638,71 @@ export default function ContactsPage() {
                           </span>
                         ))
                       ) : (
-                        <span className="text-muted-foreground text-xs">-</span>
+                        <span className="text-white/25 text-xs">-</span>
                       )}
                       {contact.tags && contact.tags.length > 3 && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[10px] text-white/40">
                           +{contact.tags.length - 3}
                         </span>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-xs hidden lg:table-cell">
+                  <TableCell className="text-white/40 text-xs hidden lg:table-cell font-mono">
                     {new Date(contact.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
                     })}
                   </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="text-muted-foreground hover:text-foreground"
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        }
-                      >
-                        <MoreHorizontal className="size-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="bg-popover border-border"
-                      >
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditForm(contact);
-                          }}
-                          className="text-popover-foreground focus:bg-muted focus:text-foreground"
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-end gap-1">
+                      {contact.phone && (
+                        <>
+                          <a
+                            href={`https://wa.me/${contact.phone.replace(/\D/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Call on WhatsApp"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/25 hover:text-emerald-300 transition-colors shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                          >
+                            <Phone className="size-3.5" />
+                          </a>
+                          <a
+                            href={`/inbox?contactId=${contact.id}`}
+                            title="Chat on WhatsApp"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-[#00f0ff]/30 bg-[#00f0ff]/10 text-[#00f0ff] hover:bg-[#00f0ff]/25 hover:text-cyan-200 transition-colors shadow-[0_0_8px_rgba(0,240,255,0.2)]"
+                          >
+                            <MessageSquare className="size-3.5" />
+                          </a>
+                        </>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-white/40 hover:text-white hover:bg-white/[0.08]"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          }
                         >
-                          <Pencil className="size-4" />
-                          {t('editAction')}
-                        </DropdownMenuItem>
+                          <MoreHorizontal className="size-4" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-[#0c0915] border border-white/10 text-white"
+                        >
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditForm(contact);
+                            }}
+                            className="text-white hover:bg-white/10"
+                          >
+                            <Pencil className="size-4 text-[#d4a017]" />
+                            {t('editAction')}
+                          </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-border" />
                         <DropdownMenuItem
                           variant="destructive"
@@ -685,6 +716,7 @@ export default function ContactsPage() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

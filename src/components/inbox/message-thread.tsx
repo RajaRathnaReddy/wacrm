@@ -27,6 +27,8 @@ import {
   RefreshCw,
   PanelRightOpen,
   PanelRightClose,
+  Phone,
+  PhoneCall,
 } from "lucide-react";
 import { format, isToday, isYesterday, differenceInHours } from "date-fns";
 import { useTranslations } from "next-intl";
@@ -942,6 +944,20 @@ export function MessageThread({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* WhatsApp Call / Direct Calling Action */}
+          {contact.phone && (
+            <a
+              href={`https://wa.me/${contact.phone.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`Call ${displayName} on WhatsApp (${contact.phone})`}
+              className="inline-flex h-7 items-center justify-center gap-1.5 rounded-md px-2.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-500/50 hover:text-emerald-300 transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)]"
+            >
+              <Phone className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="hidden sm:inline">WhatsApp Call</span>
+            </a>
+          )}
+
           {/* Contact-panel toggle — desktop only. The contact sidebar
               eats a chunk of horizontal width that crowds the thread on
               smaller laptops; this lets agents reclaim it when they just
