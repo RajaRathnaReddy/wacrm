@@ -128,10 +128,12 @@ export function SettingsOverview({
           .maybeSingle(),
         fetch('/api/whatsapp/config', { cache: 'no-store' }).then((r) => r.json()),
       ]);
-      if (cancelled) return;
+      const healthData = health.status === 'fulfilled' ? health.value : null;
       setWhatsapp({
-        configured: row.status === 'fulfilled' && !!row.value.data?.phone_number_id,
-        connected: health.status === 'fulfilled' && !!health.value?.connected,
+        configured:
+          (row.status === 'fulfilled' && !!row.value.data?.phone_number_id) ||
+          Boolean(healthData?.config?.phone_number_id),
+        connected: health.status === 'fulfilled' && !!healthData?.connected,
       });
       setWhatsappLoading(false);
     })();

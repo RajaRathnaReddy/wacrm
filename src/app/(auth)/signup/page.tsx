@@ -77,21 +77,35 @@ function SignupPageInner() {
       : "/dashboard";
     const emailRedirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, fullName, emailRedirectTo }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Signup failed");
+        setLoading(false);
+        return;
+      }
+    } catch {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo,
         },
-        emailRedirectTo,
-      },
-    });
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
     }
 
     setSuccess(true);

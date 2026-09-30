@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import {
   getSubscribedApps,
   verifyPhoneNumber,
 } from '@/lib/whatsapp/meta-api'
+
+function supabaseAdmin() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 /**
  * GET /api/whatsapp/config/verify-registration
@@ -41,7 +49,7 @@ export async function GET() {
   // whatsapp_config is one-row-per-account post-017. Resolve the
   // caller's account_id so a teammate who joined an existing account
   // sees the same registration state as the admin who set it up.
-  const { data: profile } = await supabase
+  const { data: profile } = await supabaseAdmin()
     .from('profiles')
     .select('account_id')
     .eq('user_id', user.id)
@@ -55,7 +63,7 @@ export async function GET() {
     })
   }
 
-  const { data: config } = await supabase
+  const { data: config } = await supabaseAdmin()
     .from('whatsapp_config')
     .select('*')
     .eq('account_id', accountId)

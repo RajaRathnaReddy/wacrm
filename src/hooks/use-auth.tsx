@@ -188,38 +188,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     lastFetchedUserIdRef.current = userId;
     try {
       let data: ProfileRow | null = null;
-      for (let attempt = 1; ; attempt++) {
-        const result = await supabase
-          .from("profiles")
-          .select(
-            "id, full_name, email, avatar_url, role, beta_features, account_id, account_role",
-          )
-          .eq("user_id", userId)
-          .maybeSingle();
+      let accountRow: AccountSummary | null = null;
 
-        if (!result.error) {
-          data = result.data;
-          break;
+      // 1. Try server-side endpoint first
+      try {
+        const res = await fetch("/api/account/profile");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.profile) {
+            data = json.profile;
+            if (json.account) {
+              accountRow = {
+                id: json.account.id,
+                name: json.account.name,
+                default_currency: json.account.default_currency ?? DEFAULT_CURRENCY,
+              };
+            }
+          }
         }
+      } catch (err) {
+        console.warn("[AuthProvider] /api/account/profile error, falling back to client Supabase:", err);
+      }
 
-        const error = result.error;
-        console.error("[AuthProvider] fetchProfile error:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-        // One hiccup here used to lock the session read-only for good:
-        // the profile stayed null, so every `useCan` gate answered
-        // false and no page offered a way to recover (issue #471).
-        // Retry, then hand the reason to the UI.
-        if (attempt < PROFILE_FETCH_ATTEMPTS) {
-          await sleep(PROFILE_FETCH_RETRY_MS);
-          continue;
+      // 2. Client-side fallback if server-side didn't resolve data
+      if (!data) {
+        for (let attempt = 1; ; attempt++) {
+          const result = await supabase
+            .from("profiles")
+            .select(
+              "id, full_name, email, avatar_url, role, beta_features, account_id, account_role",
+            )
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          if (!result.error) {
+            data = result.data;
+            break;
+          }
+
+          const error = result.error;
+          console.error("[AuthProvider] fetchProfile error:", {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          });
+
+          if (attempt < PROFILE_FETCH_ATTEMPTS) {
+            await sleep(PROFILE_FETCH_RETRY_MS);
+            continue;
+          }
+          lastFetchedUserIdRef.current = null;
+          setStatusDetail(error.message);
+          return;
         }
-        lastFetchedUserIdRef.current = null;
-        setStatusDetail(error.message);
-        return;
       }
 
       if (data) {
@@ -233,8 +255,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // lookup by id needs no relationship inference, so the profile
         // (with account_id / account_role) still resolves even if the
         // account name lookup itself can't.
-        let accountRow: AccountSummary | null = null;
-        if (data.account_id) {
+        if (data.account_id && !accountRow) {
           const { data: account, error: accountErr } = await supabase
             .from("accounts")
             // default_currency added in migration 021; narrowed to the

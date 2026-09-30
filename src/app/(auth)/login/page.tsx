@@ -58,15 +58,31 @@ function LoginPageInner() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        setLoading(false);
+        return;
+      }
+    } catch {
+      // Fallback to client-side Supabase if route unreachable
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
     }
 
     // Full-page navigation (not router.push) so the browser issues a

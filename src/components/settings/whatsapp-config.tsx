@@ -143,37 +143,42 @@ export function WhatsAppConfig() {
   const fetchConfig = useCallback(async (acctId: string) => {
     setLoading(true);
     try {
-      // Load form values from Supabase (shows what's in DB).
-      // Switched from `user_id` (which would only match the row's
-      // original author) to `account_id` so every member of the
-      // account sees the same saved configuration. UNIQUE(account_id)
-      // on the table guarantees the .maybeSingle() return type
-      // remains accurate.
-      const { data, error } = await supabase
-        .from('whatsapp_config')
-        .select('*')
-        .eq('account_id', acctId)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Failed to load config row:', error);
+      // 1. Fetch health and config directly from server API (resilient against browser network blocks)
+      let payload: any = null;
+      try {
+        const res = await fetch('/api/whatsapp/config', { method: 'GET', cache: 'no-store' });
+        if (res.ok) {
+          payload = await res.json();
+        }
+      } catch (err) {
+        console.error('Failed to fetch from /api/whatsapp/config:', err);
       }
 
-      if (data) {
-        setConfig(data);
-        setPhoneNumberId(data.phone_number_id || '');
-        setWabaId(data.waba_id || '');
+      // 2. Also query Supabase client if available
+      let data: any = null;
+      try {
+        const { data: dbData } = await supabase
+          .from('whatsapp_config')
+          .select('*')
+          .eq('account_id', acctId)
+          .maybeSingle();
+        data = dbData;
+      } catch (err) {
+        console.warn('Client Supabase whatsapp_config read skipped:', err);
+      }
+
+      const activeConfig = data || payload?.config;
+
+      if (activeConfig) {
+        setConfig(activeConfig);
+        setPhoneNumberId(activeConfig.phone_number_id || '');
+        setWabaId(activeConfig.waba_id || '');
         setAccessToken(MASKED_TOKEN);
-        // Same treatment as the access token: the row carries the encrypted
-        // value, which is enough to know one exists. Show a mask instead of
-        // an empty box so nobody concludes the token was never saved.
-        setVerifyToken(data.verify_token ? MASKED_TOKEN : '');
+        setVerifyToken(activeConfig.verify_token || activeConfig.has_verify_token ? MASKED_TOKEN : '');
         setVerifyEdited(false);
         setPin('');
         setTokenEdited(false);
-        // Undefined on a row read before migration 039 — treat that as
-        // on, matching the webhook's own default.
-        setMirrorMedia(data.mirror_inbound_media !== false);
+        setMirrorMedia(activeConfig.mirror_inbound_media !== false);
       } else {
         setConfig(null);
         setPhoneNumberId('');
@@ -185,31 +190,21 @@ export function WhatsAppConfig() {
         setVerifyEdited(false);
         setMirrorMedia(true);
       }
-      // Clear any stale probe result when reloading the row.
       setRegistrationProbe(null);
 
-      // Then verify health via the API (decrypts token + pings Meta)
-      if (data) {
-        try {
-          const res = await fetch('/api/whatsapp/config', { method: 'GET' });
-          const payload = await res.json();
-
-          if (payload.connected) {
-            setConnectionStatus('connected');
-            setResetReason(null);
-            setStatusMessage('');
-            setStatusMeta(null);
-            setWabaSubscription(payload.waba_subscription ?? null);
-          } else {
-            setConnectionStatus('disconnected');
-            setResetReason(payload.needs_reset ? 'token_corrupted' : payload.reason === 'meta_api_error' ? 'meta_api_error' : null);
-            setStatusMessage(payload.message || '');
-            setStatusMeta(payload.meta ?? null);
-            setWabaSubscription(null);
-          }
-        } catch (err) {
-          console.error('Health check failed:', err);
+      if (payload) {
+        if (payload.connected) {
+          setConnectionStatus('connected');
+          setResetReason(null);
+          setStatusMessage('');
+          setStatusMeta(null);
+          setWabaSubscription(payload.waba_subscription ?? null);
+        } else {
           setConnectionStatus('disconnected');
+          setResetReason(payload.needs_reset ? 'token_corrupted' : payload.reason === 'meta_api_error' ? 'meta_api_error' : null);
+          setStatusMessage(payload.message || '');
+          setStatusMeta(payload.meta ?? null);
+          setWabaSubscription(null);
         }
       } else {
         setConnectionStatus('disconnected');

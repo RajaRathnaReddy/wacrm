@@ -121,9 +121,9 @@ export async function GET() {
       )
     }
 
-    const { data: config, error: configError } = await supabase
+    const { data: config, error: configError } = await supabaseAdmin()
       .from('whatsapp_config')
-      .select('phone_number_id, waba_id, access_token, status')
+      .select('*')
       .eq('account_id', accountId)
       .maybeSingle()
 
@@ -146,6 +146,17 @@ export async function GET() {
       )
     }
 
+    const safeConfig = {
+      id: config.id,
+      phone_number_id: config.phone_number_id,
+      waba_id: config.waba_id,
+      status: config.status,
+      registered_at: config.registered_at,
+      mirror_inbound_media: config.mirror_inbound_media,
+      has_access_token: Boolean(config.access_token),
+      has_verify_token: Boolean(config.verify_token),
+    }
+
     // Try to decrypt the stored token with the current ENCRYPTION_KEY.
     // If this fails, the key changed (or was never consistent across envs).
     let accessToken: string
@@ -156,6 +167,7 @@ export async function GET() {
       return NextResponse.json(
         {
           connected: false,
+          config: safeConfig,
           reason: 'token_corrupted',
           needs_reset: true,
           message:
@@ -181,6 +193,7 @@ export async function GET() {
       return NextResponse.json(
         {
           connected: false,
+          config: safeConfig,
           reason: 'meta_api_error',
           message: explained.summary,
           meta: metaErrorPayload(explained),
@@ -222,6 +235,7 @@ export async function GET() {
 
     return NextResponse.json({
       connected: true,
+      config: safeConfig,
       phone_info: phoneInfo,
       waba_subscription: wabaSubscription,
     })

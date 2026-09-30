@@ -34,14 +34,29 @@ export default function ForgotPasswordPage() {
     // #592). Supabase must allow this origin under Authentication →
     // URL Configuration → Redirect URLs, or it silently falls back to
     // its Site URL; see docs/auth-emails.md.
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/reset-password")}`,
-    });
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent("/reset-password")}`;
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, redirectTo }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Reset failed");
+        setLoading(false);
+        return;
+      }
+    } catch {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo,
+      });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
     }
 
     setSuccess(true);
