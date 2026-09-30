@@ -14,6 +14,7 @@
  */
 
 export const THEME_IDS = [
+  "gold",
   "violet",
   "emerald",
   "cobalt",
@@ -23,7 +24,7 @@ export const THEME_IDS = [
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
-export const DEFAULT_THEME: ThemeId = "violet";
+export const DEFAULT_THEME: ThemeId = "gold";
 
 export const STORAGE_KEY = "wacrm.theme";
 
@@ -68,9 +69,15 @@ export interface ThemeMeta {
 
 export const THEMES: ReadonlyArray<ThemeMeta> = [
   {
+    id: "gold",
+    name: "Cinematic Gold",
+    tagline: "The signature Rasa Productions aesthetic — luxury obsidian with metallic gold accents.",
+    swatch: "oklch(0.76 0.16 80)",
+  },
+  {
     id: "violet",
     name: "Violet",
-    tagline: "The default — confident, slightly playful.",
+    tagline: "Confident and modern purple aesthetic.",
     swatch: "oklch(0.526 0.247 293)",
   },
   {

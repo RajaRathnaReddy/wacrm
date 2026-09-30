@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { RasaBrandMark } from "@/components/brand/rasa-logo";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "dashboard",
@@ -57,38 +58,44 @@ export function Header({ onOpenSidebar }: HeaderProps) {
     "U";
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 lg:px-6">
-      <div className="flex min-w-0 items-center gap-2">
+    <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border/70 bg-card/60 backdrop-blur-xl px-4 lg:px-6">
+      <div className="flex min-w-0 items-center gap-2.5">
         {/* Hamburger — mobile only. 44×44 hit target per Apple HIG. */}
         <button
           type="button"
           onClick={onOpenSidebar}
           aria-label={t("openMenu")}
-          className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">
+
+        {/* Small brand mark on mobile for premium presence */}
+        <div className="lg:hidden">
+          <RasaBrandMark size="sm" />
+        </div>
+
+        <h1 className="truncate text-base font-semibold text-foreground sm:text-lg tracking-tight">
           {t(titleKey as string)}
         </h1>
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-3">
         <ModeToggle />
 
         <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center gap-2 rounded-md px-1 py-1 transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
+          className="flex items-center gap-2 rounded-xl p-1 transition-all hover:bg-muted/70 focus:bg-muted/70 focus:outline-none data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
           aria-label={t("openAccountMenu")}
         >
-          <Avatar className="size-8">
+          <Avatar className="size-8 ring-1 ring-primary/40 shadow-[0_0_12px_rgba(212,175,55,0.2)]">
             {profile?.avatar_url ? (
               <AvatarImage
                 src={profile.avatar_url}
                 alt={profile.full_name ?? t("defaultAvatar")}
               />
             ) : null}
-            <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
+            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
               {initial}
             </AvatarFallback>
           </Avatar>

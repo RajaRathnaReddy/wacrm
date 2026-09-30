@@ -57,12 +57,13 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
     i === 0 || totalLoaded > PAGE_SIZES[i - 1]
 
   return (
-    <section className="rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between border-b border-border px-5 py-4">
-        <h2 className="text-sm font-semibold text-foreground">{t('title')}</h2>
+    <section className="rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-lg">
+      <header className="flex items-center justify-between border-b border-white/[0.08] px-5 py-4">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-heading)' }}>{t('title')}</h2>
         <Link
           href="/inbox"
-          className="text-xs font-medium text-primary hover:text-primary/80"
+          className="text-xs font-semibold uppercase tracking-wider text-[#00f0ff] hover:text-[#00f0ff]/80 transition-colors"
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           {t('viewAll')}
         </Link>

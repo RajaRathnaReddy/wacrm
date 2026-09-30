@@ -47,13 +47,13 @@ export function ResponseTimeChart({
     })) ?? []
 
   return (
-    <section className="rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+    <section className="rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-lg">
+      <header className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-heading)' }}>
             {t('title')}
           </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-gray-400">
             {t('description')}
           </p>
         </div>

@@ -122,13 +122,26 @@ export default function DashboardPage() {
   )
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('description')}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
+        <div>
+          <h1 className="text-3xl font-extrabold uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-heading)' }}>
+            {t('title')}
+          </h1>
+          <p className="mt-1 text-sm text-gray-400">
+            {t('description')}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            Meta Cloud API Live
+          </div>
+        </div>
       </div>
 
       {/* Metric cards */}

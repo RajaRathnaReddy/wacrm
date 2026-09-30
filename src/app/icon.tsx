@@ -22,8 +22,9 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#7c3aed", // primary (Hostinger-aligned purple)
-          borderRadius: 6,
+          background: "radial-gradient(circle at 30% 20%, #2A2312 0%, #0D0C09 100%)",
+          borderRadius: 8,
+          border: "1px solid rgba(212, 175, 55, 0.6)",
         }}
       >
         <svg
@@ -31,12 +32,18 @@ export default function Icon() {
           height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <polygon
+            points="12,2 21,7 21,17 12,22 3,17 3,7"
+            stroke="#F5CF68"
+            strokeWidth="1.8"
+            fill="rgba(14, 12, 8, 0.8)"
+          />
+          <circle cx="12" cy="12" r="3" fill="#D4AF37" />
+          <circle cx="12" cy="7" r="1.2" fill="#F5CF68" />
+          <circle cx="16.5" cy="14.5" r="1.2" fill="#F5CF68" />
+          <circle cx="7.5" cy="14.5" r="1.2" fill="#F5CF68" />
         </svg>
       </div>
     ),

@@ -49,24 +49,25 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
   }, [data])
 
   return (
-    <section className="flex h-full flex-col rounded-xl border border-border bg-card">
-      <header className="flex items-center justify-between border-b border-border px-5 py-4">
+    <section className="flex h-full flex-col rounded-2xl border border-white/[0.08] bg-[#0c0915]/80 backdrop-blur-xl shadow-lg">
+      <header className="flex items-center justify-between border-b border-white/[0.08] px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">{t('title')}</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">{t('description')}</p>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-white" style={{ fontFamily: 'var(--font-heading)' }}>{t('title')}</h2>
+          <p className="mt-0.5 text-xs text-gray-400">{t('description')}</p>
         </div>
-        <div className="flex items-center gap-1 rounded-lg bg-muted/60 p-1">
+        <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1 border border-white/5">
           {[7, 30, 90].map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => onRangeChange(r as RangeDays)}
               className={cn(
-                'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+                'rounded-lg px-2.5 py-1 text-xs font-semibold uppercase tracking-wider transition-all',
                 range === r
-                  ? 'bg-secondary text-secondary-foreground'
-                  : 'text-muted-foreground hover:text-foreground',
+                  ? 'bg-[#d4a017] text-black shadow-[0_0_12px_rgba(212,160,23,0.35)]'
+                  : 'text-gray-400 hover:text-white',
               )}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               {t('days', { count: r })}
             </button>
@@ -88,9 +89,9 @@ export function ConversationsChart({ series, loading, range, onRangeChange }: Co
         )}
       </div>
 
-      <footer className="flex items-center gap-4 border-t border-border px-5 py-3 text-xs text-muted-foreground">
-        <LegendDot color="#3b82f6" label={t('incoming')} />
-        <LegendDot color="#7c3aed" label={t('outgoing')} />
+      <footer className="flex items-center gap-4 border-t border-white/[0.08] px-5 py-3 text-xs text-gray-400">
+        <LegendDot color="#00f0ff" label={t('incoming')} />
+        <LegendDot color="#ff2a85" label={t('outgoing')} />
       </footer>
     </section>
   )
@@ -243,21 +244,21 @@ function LineSvg({
           ) : null,
         )}
 
-        {/* Outgoing polyline (violet) */}
+        {/* Outgoing polyline (neon pink) */}
         <path
           d={outgoingPath}
           fill="none"
-          stroke="#7c3aed"
-          strokeWidth={2}
+          stroke="#ff2a85"
+          strokeWidth={2.5}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* Incoming polyline (blue) */}
+        {/* Incoming polyline (cyan) */}
         <path
           d={incomingPath}
           fill="none"
-          stroke="#3b82f6"
-          strokeWidth={2}
+          stroke="#00f0ff"
+          strokeWidth={2.5}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -270,11 +271,11 @@ function LineSvg({
               x2={hoverX}
               y1={PADDING.top}
               y2={PADDING.top + chartH}
-              stroke="var(--muted-foreground)"
+              stroke="rgba(255,255,255,0.2)"
               strokeDasharray="3 3"
             />
-            <circle cx={hoverX} cy={yFor(data[hover.idx].incoming)} r={3.5} fill="#3b82f6" />
-            <circle cx={hoverX} cy={yFor(data[hover.idx].outgoing)} r={3.5} fill="#7c3aed" />
+            <circle cx={hoverX} cy={yFor(data[hover.idx].incoming)} r={4} fill="#00f0ff" />
+            <circle cx={hoverX} cy={yFor(data[hover.idx].outgoing)} r={4} fill="#ff2a85" />
           </g>
         )}
       </svg>
