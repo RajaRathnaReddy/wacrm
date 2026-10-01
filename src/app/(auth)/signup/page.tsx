@@ -113,6 +113,37 @@ function SignupPageInner() {
     setLoading(false);
   };
 
+  if (!inviteToken) {
+    return (
+      <div className="relative flex min-h-screen items-center justify-center bg-[#050508] px-4 overflow-hidden">
+        {/* Studio Radial Glows */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[radial-gradient(circle,_rgba(123,45,139,0.18)_0%,_rgba(0,0,0,0)_70%)] pointer-events-none blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-[radial-gradient(circle,_rgba(0,240,255,0.12)_0%,_rgba(0,0,0,0)_70%)] pointer-events-none blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[radial-gradient(circle,_rgba(255,42,133,0.12)_0%,_rgba(0,0,0,0)_70%)] pointer-events-none blur-3xl" />
+
+        <Card className="relative z-10 w-full max-w-md border border-white/10 bg-[#0b0914]/85 shadow-[0_0_60px_-10px_rgba(212,160,23,0.25)] backdrop-blur-2xl rounded-2xl overflow-hidden p-8 text-center">
+          <div className="mb-4 flex justify-center">
+            <RasaLogo size="lg" subtitle="PRODUCTIONS" />
+          </div>
+          <CardTitle className="text-2xl font-bold tracking-wider uppercase text-white" style={{ fontFamily: "var(--font-heading)" }}>
+            Invite-Only Registration
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-400 mt-2 mb-6">
+            Public self-registration is closed. Only users who have been invited by the account administrator can join Rasa Productions CRM.
+          </CardDescription>
+          <Link href="/login">
+            <Button
+              className="h-11 w-full bg-gradient-to-r from-[#d4a017] via-[#f59e0b] to-[#d4a017] text-black font-bold uppercase tracking-wider rounded-xl shadow-[0_0_25px_rgba(212,160,23,0.35)] hover:brightness-110 active:scale-[0.99] transition-all"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              Return to Sign In
+            </Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
   if (success) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
