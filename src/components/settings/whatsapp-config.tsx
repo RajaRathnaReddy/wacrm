@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { SettingsPanelHead } from './settings-panel-head';
+import { EmbeddedSignupCard } from './embedded-signup-card';
 import {
   Accordion,
   AccordionItem,
@@ -543,6 +544,14 @@ export function WhatsAppConfig() {
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
       {/* Main config form */}
       <div className="space-y-6">
+        {/* 1-Click Meta Embedded Signup */}
+        <EmbeddedSignupCard
+          isConnected={connectionStatus === 'connected'}
+          phoneNumber={config?.phone_number_id ? `ID: ${config.phone_number_id}` : undefined}
+          onSuccess={() => {
+            if (accountId) fetchConfig(accountId);
+          }}
+        />
         {/* Corrupted-token reset banner */}
         {showResetBanner && (
           <Alert className="bg-amber-950/40 border-amber-600/40">
