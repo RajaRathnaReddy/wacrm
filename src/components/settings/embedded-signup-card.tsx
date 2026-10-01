@@ -6,9 +6,10 @@ import {
   CheckCircle2,
   Loader2,
   Sparkles,
-  ExternalLink,
   ShieldCheck,
   RefreshCw,
+  X,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -27,17 +28,20 @@ interface EmbeddedSignupCardProps {
   onSuccess: () => void;
 }
 
+const DEFAULT_CONFIG_ID = '1395945589415959';
+
 export function EmbeddedSignupCard({
   isConnected,
   phoneNumber,
   onSuccess,
 }: EmbeddedSignupCardProps) {
-  const [appId, setAppId] = useState<string>('');
-  const [configId, setConfigId] = useState<string>('');
+  const [appId, setAppId] = useState<string>('3466374920204212');
+  const [configId, setConfigId] = useState<string>(DEFAULT_CONFIG_ID);
   const [sdkLoaded, setSdkLoaded] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [statusText, setStatusText] = useState<string>('');
   const sessionDataRef = useRef<{ phone_number_id?: string; waba_id?: string }>({});
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 1. Fetch Meta App ID & Config ID from backend config endpoint
   useEffect(() => {
@@ -48,7 +52,9 @@ export function EmbeddedSignupCard({
           const data = await res.json();
           if (data.appId) {
             setAppId(data.appId);
-            setConfigId(data.configId || '');
+          }
+          if (data.configId) {
+            setConfigId(data.configId);
           }
         }
       } catch (err) {
@@ -77,7 +83,6 @@ export function EmbeddedSignupCard({
       setSdkLoaded(true);
     };
 
-    // Check if script already exists in DOM
     if (!document.getElementById('facebook-jssdk')) {
       const script = document.createElement('script');
       script.id = 'facebook-jssdk';
@@ -88,6 +93,13 @@ export function EmbeddedSignupCard({
       document.body.appendChild(script);
     }
   }, [appId]);
+
+  // Clean up any pending timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   // 3. Listen for window messages from Meta's Embedded Signup popup (WA_EMBEDDED_SIGNUP)
   useEffect(() => {
@@ -109,6 +121,7 @@ export function EmbeddedSignupCard({
             };
           } else if (data.event === 'CANCEL') {
             console.log('Embedded Signup flow cancelled by user');
+            handleCancel();
           }
         }
       } catch (e) {
@@ -120,9 +133,17 @@ export function EmbeddedSignupCard({
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  const handleCancel = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setConnecting(false);
+    setStatusText('');
+    sessionDataRef.current = {};
+  };
+
   // 4. Handle exchange of auth code with server
   const handleExchangeCode = useCallback(
     async (code: string) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       setStatusText('Exchanging authorization with Meta & subscribing webhooks...');
       try {
         const res = await fetch('/api/whatsapp/embedded-signup/callback', {
@@ -146,9 +167,7 @@ export function EmbeddedSignupCard({
         console.error('Embedded signup callback error:', err);
         toast.error(err.message || 'Error completing Meta connection');
       } finally {
-        setConnecting(false);
-        setStatusText('');
-        sessionDataRef.current = {};
+        handleCancel();
       }
     },
     [onSuccess]
@@ -162,9 +181,25 @@ export function EmbeddedSignupCard({
     }
 
     setConnecting(true);
-    setStatusText('Opening Meta authorization popup...');
+    setStatusText('Opening Meta popup...');
+
+    // Auto-timeout after 90 seconds so the button never hangs indefinitely
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setConnecting((prev) => {
+        if (prev) {
+          toast.info('Meta popup timed out or was closed.');
+          return false;
+        }
+        return false;
+      });
+      setStatusText('');
+    }, 90000);
+
+    const activeConfigId = configId || DEFAULT_CONFIG_ID;
 
     const loginOptions: any = {
+      config_id: activeConfigId,
       response_type: 'code',
       override_default_response_type: true,
       extras: {
@@ -173,19 +208,14 @@ export function EmbeddedSignupCard({
       },
     };
 
-    if (configId) {
-      loginOptions.config_id = configId;
-    }
-
     try {
       window.FB.login(function (response: any) {
         if (response?.authResponse?.code) {
           handleExchangeCode(response.authResponse.code);
         } else {
-          setConnecting(false);
-          setStatusText('');
+          handleCancel();
           if (response?.status === 'unknown') {
-            toast.info('Meta authorization window was closed.');
+            toast.info('Meta popup was closed.');
           } else {
             console.log('FB.login response:', response);
           }
@@ -193,8 +223,7 @@ export function EmbeddedSignupCard({
       }, loginOptions);
     } catch (err: any) {
       console.error('FB.login invocation error:', err);
-      setConnecting(false);
-      setStatusText('');
+      handleCancel();
       toast.error('Failed to open Meta popup. Ensure popup blockers are disabled.');
     }
   };
@@ -229,7 +258,7 @@ export function EmbeddedSignupCard({
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <ShieldCheck className="size-4 text-emerald-400" />
-            <span>Official Meta Partner Flow</span>
+            <span>Config ID: {configId || DEFAULT_CONFIG_ID}</span>
           </div>
         </div>
 
@@ -259,25 +288,39 @@ export function EmbeddedSignupCard({
               </div>
             </div>
 
-            <Button
-              onClick={handleStartSignup}
-              disabled={connecting || !sdkLoaded}
-              variant="outline"
-              size="sm"
-              className="gap-2 border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-300"
-            >
-              {connecting ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  <span>Connecting...</span>
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="size-3.5" />
-                  <span>Re-authorize with Meta</span>
-                </>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleStartSignup}
+                disabled={connecting || !sdkLoaded}
+                variant="outline"
+                size="sm"
+                className="gap-2 border-emerald-500/30 hover:bg-emerald-500/10 text-emerald-300"
+              >
+                {connecting ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Connecting...</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="size-3.5" />
+                    <span>Re-authorize with Meta</span>
+                  </>
+                )}
+              </Button>
+
+              {connecting && (
+                <Button
+                  onClick={handleCancel}
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <X className="size-3.5" />
+                  Cancel
+                </Button>
               )}
-            </Button>
+            </div>
           </div>
         ) : (
           <div className="flex items-center gap-3 flex-wrap">
@@ -301,12 +344,33 @@ export function EmbeddedSignupCard({
               )}
             </Button>
 
+            {connecting && (
+              <Button
+                onClick={handleCancel}
+                variant="ghost"
+                size="sm"
+                className="gap-1 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <X className="size-3.5" />
+                Cancel
+              </Button>
+            )}
+
             {!sdkLoaded && (
               <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                 <Loader2 className="size-3 animate-spin" />
                 Initializing Meta SDK...
               </span>
             )}
+          </div>
+        )}
+
+        {connecting && (
+          <div className="p-2.5 rounded border border-amber-500/20 bg-amber-500/10 text-amber-200 text-xs flex items-center gap-2 animate-in fade-in-50">
+            <AlertCircle className="size-4 shrink-0 text-amber-400" />
+            <span>
+              If the Meta popup window did not open, look at your browser address bar and click <strong>Allow pop-ups</strong>.
+            </span>
           </div>
         )}
 

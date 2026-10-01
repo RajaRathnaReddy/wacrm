@@ -13,7 +13,7 @@ export async function GET() {
     }
 
     const appId = process.env.META_APP_ID || process.env.NEXT_PUBLIC_META_APP_ID || '';
-    const configId = process.env.META_CONFIG_ID || process.env.NEXT_PUBLIC_META_CONFIG_ID || '';
+    const configId = process.env.META_CONFIG_ID || process.env.NEXT_PUBLIC_META_CONFIG_ID || '1395945589415959';
 
     return NextResponse.json({
       appId,
